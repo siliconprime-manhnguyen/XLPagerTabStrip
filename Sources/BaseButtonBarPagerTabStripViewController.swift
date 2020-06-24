@@ -221,7 +221,26 @@ open class BaseButtonBarPagerTabStripViewController<ButtonBarCellType: UICollect
         }
         moveToViewController(at: indexPath.item)
     }
+    
+    open func myMoveToView(indexPath:Int){
+        guard indexPath != currentIndex else { return }
 
+        buttonBarView.moveTo(index: indexPath, animated: true, swipeDirection: .none, pagerScroll: .yes)
+        shouldUpdateButtonBarView = false
+
+        let oldCell = buttonBarView.cellForItem(at: IndexPath(item: currentIndex, section: 0)) as? ButtonBarCellType
+        let newCell = buttonBarView.cellForItem(at: IndexPath(item: indexPath, section: 0)) as? ButtonBarCellType
+        if pagerBehaviour.isProgressiveIndicator {
+            if let changeCurrentIndexProgressive = changeCurrentIndexProgressive {
+                changeCurrentIndexProgressive(oldCell, newCell, 1, true, true)
+            }
+        } else {
+            if let changeCurrentIndex = changeCurrentIndex {
+                changeCurrentIndex(oldCell, newCell, true)
+            }
+        }
+        moveToViewController(at: indexPath)
+    }
     // MARK: - UICollectionViewDataSource
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
